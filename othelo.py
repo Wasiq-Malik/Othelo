@@ -46,78 +46,173 @@ def generate_valid_moves(state: State):
     col = len(grid[0])
     black = state.black_turn
 
-    valid_moves = []
+    valid_moves = set()
     if black:
         for r, c in state.white_cords:
             # check vertical boundaries
             if r - 1 > -1 and r + 1 < row:
                 # check vertical valid moves
-                if grid[r - 1][c] is None and grid[r + 1][c] is black:
-                    valid_moves.append((r - 1, c))
+                if grid[r - 1][c] is None:
+                    start_ptr = r + 1
+                    while start_ptr < row - 1 and grid[start_ptr][c] is not black:
+                        start_ptr += 1
 
-                if grid[r - 1][c] is black and grid[r + 1][c] is None:
-                    valid_moves.append((r + 1, c))
+                    if grid[start_ptr][c] is black:
+                        valid_moves.add((r - 1, c))
+
+                if grid[r + 1][c] is None:
+                    start_ptr = r - 1
+                    while start_ptr > 0 and grid[start_ptr][c] is not black:
+                        start_ptr -= 1
+                    if grid[start_ptr][c] is black:
+                        valid_moves.add((r + 1, c))
 
             # check horizontal boundaries
             if c - 1 > -1 and c + 1 < col:
                 # check horizontal valid moves
-                if grid[r][c - 1] is None and grid[r][c + 1] is black:
-                    valid_moves.append((r, c - 1))
+                if grid[r][c - 1] is None:
+                    start_ptr = c + 1
+                    while start_ptr < col - 1 and grid[r][start_ptr] is not black:
+                        start_ptr += 1
 
-                if grid[r][c - 1] is black and grid[r][c + 1] is None:
-                    valid_moves.append((r, c + 1))
+                    if grid[r][start_ptr] is black:
+                        valid_moves.add((r, c - 1))
+
+                if grid[r][c + 1] is None:
+                    start_ptr = c - 1
+                    while start_ptr > 0 and grid[r][start_ptr] is not black:
+                        start_ptr -= 1
+
+                    if grid[r][start_ptr] is black:
+                        valid_moves.add((r, c + 1))
 
             # check diagonal boundaries
             if r - 1 > -1 and r + 1 < row and c - 1 > -1 and c + 1 < col:
                 # check primary diagonal valid moves
-                if grid[r - 1][c - 1] is None and grid[r + 1][c + 1] is black:
-                    valid_moves.append((r - 1, c - 1))
+                if grid[r - 1][c - 1] is None:
+                    start_r = r + 1
+                    start_c = c + 1
+                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] is not black:
+                        start_r += 1
+                        start_c += 1
 
-                if grid[r - 1][c - 1] is black and grid[r + 1][c + 1] is None:
-                    valid_moves.append((r + 1, c + 1))
+                        if grid[start_r][start_c] is black:
+                            valid_moves.add((r - 1, c - 1))
+
+                if grid[r + 1][c + 1] is None:
+                    start_r = r - 1
+                    start_c = c - 1
+                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] is not black:
+                        start_r -= 1
+                        start_c -= 1
+
+                    if grid[start_r][start_c] is black:
+                        valid_moves.add((r + 1, c + 1))
 
                 # check secondary diagonal valid moves
                 if grid[r - 1][c + 1] is None and grid[r + 1][c - 1] is black:
-                    valid_moves.append((r - 1, c + 1))
+                    start_r = r + 1
+                    start_c = c - 1
+                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] is not black:
+                        start_r += 1
+                        start_c -= 1
+
+                    if grid[start_r][start_c] is black:
+                        valid_moves.add((r - 1, c + 1))
 
                 if grid[r - 1][c + 1] is black and grid[r + 1][c - 1] is None:
-                    valid_moves.append((r + 1, c - 1))
+                    start_r = r - 1
+                    start_c = c + 1
+                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] is not black:
+                        start_r -= 1
+                        start_c += 1
+
+                    if grid[start_r][start_c] is black:
+                        valid_moves.add((r + 1, c - 1))
     # in case white player's turn
     else:
         for r, c in state.black_cords:
             # check vertical boundaries
             if r - 1 > -1 and r + 1 < row:
                 # check vertical valid moves
-                if grid[r - 1][c] is None and grid[r + 1][c] is not black:
-                    valid_moves.append((r - 1, c))
+                if grid[r - 1][c] is None:
+                    start_ptr = r + 1
+                    while start_ptr < row - 1 and grid[start_ptr][c] is black:
+                        start_ptr += 1
 
-                if grid[r - 1][c] is not black and grid[r + 1][c] is None:
-                    valid_moves.append((r + 1, c))
+                    if grid[start_ptr][c] is not black:
+                        valid_moves.add((r - 1, c))
+
+                if grid[r + 1][c] is None:
+                    start_ptr = r - 1
+                    while start_ptr > 0 and grid[start_ptr][c] is black:
+                        start_ptr -= 1
+
+                    if grid[start_ptr][c] is not black:
+                        valid_moves.add((r + 1, c))
 
             # check horizontal boundaries
             if c - 1 > -1 and c + 1 < col:
                 # check horizontal valid moves
-                if grid[r][c - 1] is None and grid[r][c + 1] is not black:
-                    valid_moves.append((r, c - 1))
+                if grid[r][c - 1] is None:
+                    start_ptr = c + 1
+                    while start_ptr < col - 1 and grid[r][start_ptr] is black:
+                        start_ptr += 1
 
-                if grid[r][c - 1] is not black and grid[r][c + 1] is None:
-                    valid_moves.append((r, c + 1))
+                    if grid[r][start_ptr] is not black:
+                        valid_moves.add((r, c - 1))
+
+                if grid[r][c + 1] is None:
+                    start_ptr = c - 1
+                    while start_ptr > 0 and grid[r][start_ptr] is black:
+                        start_ptr -= 1
+
+                    if grid[r][start_ptr] is not black:
+                        valid_moves.add((r, c + 1))
 
             # check diagonal boundaries
             if r - 1 > -1 and r + 1 < row and c - 1 > -1 and c + 1 < col:
                 # check primary diagonal valid moves
-                if grid[r - 1][c - 1] is None and grid[r + 1][c + 1] is not black:
-                    valid_moves.append((r - 1, c - 1))
+                if grid[r - 1][c - 1] is None:
+                    start_r = r + 1
+                    start_c = c + 1
+                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] is black:
+                        start_r += 1
+                        start_c += 1
 
-                if grid[r - 1][c - 1] is not black and grid[r + 1][c + 1] is None:
-                    valid_moves.append((r + 1, c + 1))
+                        if grid[start_r][start_c] is not black:
+                            valid_moves.add((r - 1, c - 1))
+
+                if grid[r + 1][c + 1] is None:
+                    start_r = r - 1
+                    start_c = c - 1
+                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] is black:
+                        start_r -= 1
+                        start_c -= 1
+
+                    if grid[start_r][start_c] is not black:
+                        valid_moves.add((r + 1, c + 1))
 
                 # check secondary diagonal valid moves
-                if grid[r - 1][c + 1] is None and grid[r + 1][c - 1] is not black:
-                    valid_moves.append((r - 1, c + 1))
+                if grid[r - 1][c + 1] is None and grid[r + 1][c - 1] is black:
+                    start_r = r + 1
+                    start_c = c - 1
+                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] is black:
+                        start_r += 1
+                        start_c -= 1
 
-                if grid[r - 1][c + 1] is not black and grid[r + 1][c - 1] is None:
-                    valid_moves.append((r + 1, c - 1))
+                    if grid[start_r][start_c] is not black:
+                        valid_moves.add((r - 1, c + 1))
+
+                if grid[r - 1][c + 1] is black and grid[r + 1][c - 1] is None:
+                    start_r = r - 1
+                    start_c = c + 1
+                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] is black:
+                        start_r -= 1
+                        start_c += 1
+
+                    if grid[start_r][start_c] is not black:
+                        valid_moves.add((r + 1, c - 1))
 
     return valid_moves
 
@@ -206,7 +301,7 @@ def generate_child(curr_state: State, move):
                         start_ptr += 1
 
 
-   # else:
+# else:
 
 
 def generate_successors(parent: TreeNode):
@@ -246,10 +341,10 @@ def main():
         Line(Point(i * cellWidth, 0), Point(i * cellWidth, wHeight)).draw(win)
         Line(Point(0, i * cellHeight), Point(wHeight, i * cellHeight)).draw(win)
     grid = [[None for i in range(cols)] for j in range(rows)]
-    grid[(rows // 2) - 1][(cols // 2) - 1] = 1
-    grid[(rows // 2)][(cols // 2)] = 1
-    grid[(rows // 2)][(cols // 2) - 1] = 0
-    grid[(rows // 2) - 1][(cols // 2)] = 0
+    grid[(rows // 2) - 1][(cols // 2) - 1] = True
+    grid[(rows // 2)][(cols // 2)] = True
+    grid[(rows // 2)][(cols // 2) - 1] = False
+    grid[(rows // 2) - 1][(cols // 2)] = False
 
     circles = []
     for i in range(cols):
@@ -262,7 +357,14 @@ def main():
     updateGraphics(grid, circles)
     prevGrid = grid
 
+    blacks = [((rows // 2) - 1, (cols // 2) - 1), (rows // 2, (cols // 2))]
+    whites = [(rows // 2, (cols // 2) - 1), ((rows // 2) - 1, cols // 2)]
     blackTurn = True
+
+    initial_state: State = State(grid, blacks, whites, blackTurn)
+
+    moves = generate_valid_moves(initial_state)
+
     while win.checkKey() != 'Escape':
         mouseClick = win.getMouse()
         if type(mouseClick) == Point:
