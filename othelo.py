@@ -2,14 +2,18 @@ from graphics import *
 import copy
 
 # grid settings
-rows = 10
-cols = 10
+rows = 8
+cols = 8
+total_cells = rows * cols
+moves_made = 4
 wWidth = 800
 wHeight = 800
 cellWidth = wWidth // rows
 cellHeight = wHeight // cols
 
 EMPTY = -1
+BLACK = 1
+WHITE = 0
 
 
 # n-ary Tree Node
@@ -41,6 +45,7 @@ class State:
         self.white_score = len(whites)
         self.black_turn = is_black
         self.move = move
+        self.valid_moves = generate_valid_moves(self)
 
 
 def generate_valid_moves(state: State):
@@ -58,17 +63,17 @@ def generate_valid_moves(state: State):
                 # check vertical valid moves
                 if grid[r - 1][c] == EMPTY:
                     start_ptr = r + 1
-                    while start_ptr < row - 1 and grid[start_ptr][c] == int(not black):
+                    while start_ptr < row - 1 and grid[start_ptr][c] == WHITE:
                         start_ptr += 1
 
-                    if grid[start_ptr][c] == int(black):
+                    if grid[start_ptr][c] == BLACK:
                         valid_moves.add((r - 1, c))
 
                 if grid[r + 1][c] == EMPTY:
                     start_ptr = r - 1
-                    while start_ptr > 0 and grid[start_ptr][c] == int(not black):
+                    while start_ptr > 0 and grid[start_ptr][c] == WHITE:
                         start_ptr -= 1
-                    if grid[start_ptr][c] == int(black):
+                    if grid[start_ptr][c] == BLACK:
                         valid_moves.add((r + 1, c))
 
             # check horizontal boundaries
@@ -76,18 +81,18 @@ def generate_valid_moves(state: State):
                 # check horizontal valid moves
                 if grid[r][c - 1] == EMPTY:
                     start_ptr = c + 1
-                    while start_ptr < col - 1 and grid[r][start_ptr] == int(not black):
+                    while start_ptr < col - 1 and grid[r][start_ptr] == WHITE:
                         start_ptr += 1
 
-                    if grid[r][start_ptr] == int(black):
+                    if grid[r][start_ptr] == BLACK:
                         valid_moves.add((r, c - 1))
 
                 if grid[r][c + 1] == EMPTY:
                     start_ptr = c - 1
-                    while start_ptr > 0 and grid[r][start_ptr] == int(not black):
+                    while start_ptr > 0 and grid[r][start_ptr] == WHITE:
                         start_ptr -= 1
 
-                    if grid[r][start_ptr] == int(black):
+                    if grid[r][start_ptr] == BLACK:
                         valid_moves.add((r, c + 1))
 
             # check diagonal boundaries
@@ -96,42 +101,42 @@ def generate_valid_moves(state: State):
                 if grid[r - 1][c - 1] == EMPTY:
                     start_r = r + 1
                     start_c = c + 1
-                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == int(not black):
+                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == WHITE:
                         start_r += 1
                         start_c += 1
 
-                        if grid[start_r][start_c] == int(black):
-                            valid_moves.add((r - 1, c - 1))
+                    if grid[start_r][start_c] == BLACK:
+                        valid_moves.add((r - 1, c - 1))
 
                 if grid[r + 1][c + 1] == EMPTY:
                     start_r = r - 1
                     start_c = c - 1
-                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] == int(not black):
+                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] == WHITE:
                         start_r -= 1
                         start_c -= 1
 
-                    if grid[start_r][start_c] == int(black):
+                    if grid[start_r][start_c] == BLACK:
                         valid_moves.add((r + 1, c + 1))
 
                 # check secondary diagonal valid moves
                 if grid[r - 1][c + 1] == EMPTY:
                     start_r = r + 1
                     start_c = c - 1
-                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == int(not black):
+                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == WHITE:
                         start_r += 1
                         start_c -= 1
 
-                    if grid[start_r][start_c] == int(black):
+                    if grid[start_r][start_c] == BLACK:
                         valid_moves.add((r - 1, c + 1))
 
                 if grid[r + 1][c - 1] == EMPTY:
                     start_r = r - 1
                     start_c = c + 1
-                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == int(not black):
+                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == WHITE:
                         start_r -= 1
                         start_c += 1
 
-                    if grid[start_r][start_c] == int(black):
+                    if grid[start_r][start_c] == BLACK:
                         valid_moves.add((r + 1, c - 1))
     # in case white player's turn
     else:
@@ -141,18 +146,18 @@ def generate_valid_moves(state: State):
                 # check vertical valid moves
                 if grid[r - 1][c] == EMPTY:
                     start_ptr = r + 1
-                    while start_ptr < row - 1 and grid[start_ptr][c] == int(black):
+                    while start_ptr < row - 1 and grid[start_ptr][c] == BLACK:
                         start_ptr += 1
 
-                    if grid[start_ptr][c] == int(not black):
+                    if grid[start_ptr][c] == WHITE:
                         valid_moves.add((r - 1, c))
 
                 if grid[r + 1][c] == EMPTY:
                     start_ptr = r - 1
-                    while start_ptr > 0 and grid[start_ptr][c] == int(black):
+                    while start_ptr > 0 and grid[start_ptr][c] == BLACK:
                         start_ptr -= 1
 
-                    if grid[start_ptr][c] == int(not black):
+                    if grid[start_ptr][c] == WHITE:
                         valid_moves.add((r + 1, c))
 
             # check horizontal boundaries
@@ -160,18 +165,18 @@ def generate_valid_moves(state: State):
                 # check horizontal valid moves
                 if grid[r][c - 1] == EMPTY:
                     start_ptr = c + 1
-                    while start_ptr < col - 1 and grid[r][start_ptr] == int(black):
+                    while start_ptr < col - 1 and grid[r][start_ptr] == BLACK:
                         start_ptr += 1
 
-                    if grid[r][start_ptr] == int(not black):
+                    if grid[r][start_ptr] == WHITE:
                         valid_moves.add((r, c - 1))
 
                 if grid[r][c + 1] == EMPTY:
                     start_ptr = c - 1
-                    while start_ptr > 0 and grid[r][start_ptr] == int(black):
+                    while start_ptr > 0 and grid[r][start_ptr] == BLACK:
                         start_ptr -= 1
 
-                    if grid[r][start_ptr] == int(not black):
+                    if grid[r][start_ptr] == WHITE:
                         valid_moves.add((r, c + 1))
 
             # check diagonal boundaries
@@ -180,42 +185,42 @@ def generate_valid_moves(state: State):
                 if grid[r - 1][c - 1] == EMPTY:
                     start_r = r + 1
                     start_c = c + 1
-                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == int(black):
+                    while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == BLACK:
                         start_r += 1
                         start_c += 1
 
-                        if grid[start_r][start_c] == int(not black):
-                            valid_moves.add((r - 1, c - 1))
+                    if grid[start_r][start_c] == WHITE:
+                        valid_moves.add((r - 1, c - 1))
 
                 if grid[r + 1][c + 1] == EMPTY:
                     start_r = r - 1
                     start_c = c - 1
-                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] == int(black):
+                    while start_r > 0 and start_c > 0 and grid[start_r][start_c] == BLACK:
                         start_r -= 1
                         start_c -= 1
 
-                    if grid[start_r][start_c] == int(not black):
+                    if grid[start_r][start_c] == WHITE:
                         valid_moves.add((r + 1, c + 1))
 
                 # check secondary diagonal valid moves
                 if grid[r - 1][c + 1] == EMPTY:
                     start_r = r + 1
                     start_c = c - 1
-                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == int(black):
+                    while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == BLACK:
                         start_r += 1
                         start_c -= 1
 
-                    if grid[start_r][start_c] == int(not black):
+                    if grid[start_r][start_c] == WHITE:
                         valid_moves.add((r - 1, c + 1))
 
                 if grid[r + 1][c - 1] == EMPTY:
                     start_r = r - 1
                     start_c = c + 1
-                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == int(black):
+                    while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == BLACK:
                         start_r -= 1
                         start_c += 1
 
-                    if grid[start_r][start_c] == int(not black):
+                    if grid[start_r][start_c] == WHITE:
                         valid_moves.add((r + 1, c - 1))
 
     return valid_moves
@@ -233,95 +238,95 @@ def generate_child(curr_state: State, move):
     [r, c] = move
 
     if black:
-        local_grid[r][c] = int(black)
+        local_grid[r][c] = BLACK
         black_balls.append((r, c))
 
         # check up boundary
         if r - 1 > -1:
             # check above for white
-            if grid[r - 1][c] == int(not black):
+            if grid[r - 1][c] == WHITE:
                 start_ptr = r - 1
-                while start_ptr > 0 and grid[start_ptr][c] == int(not black):
+                while start_ptr > 0 and grid[start_ptr][c] == WHITE:
                     start_ptr -= 1
 
-                if grid[start_ptr][c] == int(black):
+                if grid[start_ptr][c] == BLACK:
                     end_ptr = start_ptr
                     start_ptr = r - 1
 
                     while start_ptr != end_ptr:
-                        local_grid[start_ptr][c] = int(black)
+                        local_grid[start_ptr][c] = BLACK
                         white_balls.remove((start_ptr, c))
                         black_balls.append((start_ptr, c))
                         start_ptr -= 1
         # check down boundary
         if r + 1 < row:
             # check below for white
-            if grid[r + 1][c] == int(not black):
+            if grid[r + 1][c] == WHITE:
                 start_ptr = r + 1
-                while start_ptr < row - 1 and grid[start_ptr][c] == int(not black):
+                while start_ptr < row - 1 and grid[start_ptr][c] == WHITE:
                     start_ptr += 1
 
-                if grid[start_ptr][c] == int(black):
+                if grid[start_ptr][c] == BLACK:
                     end_ptr = start_ptr
                     start_ptr = r + 1
 
                     while start_ptr != end_ptr:
-                        local_grid[start_ptr][c] = int(black)
+                        local_grid[start_ptr][c] = BLACK
                         white_balls.remove((start_ptr, c))
                         black_balls.append((start_ptr, c))
                         start_ptr += 1
         # check left boundary
         if c - 1 > -1:
             # check left for white
-            if grid[r][c - 1] == int(not black):
+            if grid[r][c - 1] == WHITE:
                 start_ptr = c - 1
-                while start_ptr > 0 and grid[r][start_ptr] == int(not black):
+                while start_ptr > 0 and grid[r][start_ptr] == WHITE:
                     start_ptr -= 1
 
-                if grid[r][start_ptr] == int(black):
+                if grid[r][start_ptr] == BLACK:
                     end_ptr = start_ptr
                     start_ptr = c - 1
 
                     while start_ptr != end_ptr:
-                        local_grid[r][start_ptr] = int(black)
+                        local_grid[r][start_ptr] = BLACK
                         white_balls.remove((r, start_ptr))
                         black_balls.append((r, start_ptr))
                         start_ptr -= 1
         # check right boundary
         if c + 1 < col:
             # check right for white
-            if grid[r][c + 1] == int(not black):
+            if grid[r][c + 1] == WHITE:
                 start_ptr = c + 1
-                while start_ptr < col - 1 and grid[r][start_ptr] == int(not black):
+                while start_ptr < col - 1 and grid[r][start_ptr] == WHITE:
                     start_ptr += 1
 
-                if grid[r][start_ptr] == int(black):
+                if grid[r][start_ptr] == BLACK:
                     end_ptr = start_ptr
                     start_ptr = c + 1
 
                     while start_ptr != end_ptr:
-                        local_grid[r][start_ptr] = int(black)
+                        local_grid[r][start_ptr] = BLACK
                         white_balls.remove((r, start_ptr))
                         black_balls.append((r, start_ptr))
                         start_ptr += 1
         # check upper left boundary
         if r - 1 > -1 and c - 1 > -1:
             # check upper left for white
-            if grid[r - 1][c - 1] == int(not black):
+            if grid[r - 1][c - 1] == WHITE:
                 start_r = r - 1
                 start_c = c - 1
-                while start_r > 0 and start_c > 0 and grid[start_r][start_c] == int(not black):
+                while start_r > 0 and start_c > 0 and grid[start_r][start_c] == WHITE:
                     start_r -= 1
                     start_c -= 1
 
-                if grid[start_r][start_c] == int(black):
+                if grid[start_r][start_c] == BLACK:
                     end_r = start_r
                     end_c = start_c
                     start_r = r - 1
                     start_c = c - 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(black)
+                        local_grid[start_r][start_c] = BLACK
                         white_balls.remove((start_r, start_c))
                         black_balls.append((start_r, start_c))
                         start_r -= 1
@@ -329,21 +334,21 @@ def generate_child(curr_state: State, move):
         # check lower right boundary
         if r + 1 < row and c + 1 < col:
             # check lower right for white
-            if grid[r + 1][c + 1] == int(not black):
+            if grid[r + 1][c + 1] == WHITE:
                 start_r = r + 1
                 start_c = c + 1
-                while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == int(not black):
+                while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == WHITE:
                     start_r += 1
                     start_c += 1
 
-                if grid[start_r][start_c] == int(black):
+                if grid[start_r][start_c] == BLACK:
                     end_r = start_r
                     end_c = start_c
                     start_r = r + 1
                     start_c = c + 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(black)
+                        local_grid[start_r][start_c] = BLACK
                         white_balls.remove((start_r, start_c))
                         black_balls.append((start_r, start_c))
                         start_r += 1
@@ -351,21 +356,21 @@ def generate_child(curr_state: State, move):
         # check upper right boundary
         if r - 1 > -1 and c + 1 < col:
             # check upper right for white
-            if grid[r - 1][c + 1] == int(not black):
+            if grid[r - 1][c + 1] == WHITE:
                 start_r = r - 1
                 start_c = c + 1
-                while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == int(not black):
+                while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == WHITE:
                     start_r -= 1
                     start_c += 1
 
-                if grid[start_r][start_c] == int(black):
+                if grid[start_r][start_c] == BLACK:
                     end_r = start_r
                     end_c = start_c
                     start_r = r - 1
                     start_c = c + 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(black)
+                        local_grid[start_r][start_c] = BLACK
                         white_balls.remove((start_r, start_c))
                         black_balls.append((start_r, start_c))
                         start_r -= 1
@@ -373,116 +378,116 @@ def generate_child(curr_state: State, move):
         # check lower left boundary
         if r + 1 < row and c - 1 > - 1:
             # check lower left for white
-            if grid[r + 1][c - 1] == int(not black):
+            if grid[r + 1][c - 1] == WHITE:
                 start_r = r + 1
                 start_c = c - 1
-                while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == int(not black):
+                while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == WHITE:
                     start_r += 1
                     start_c -= 1
 
-                if grid[start_r][start_c] == int(black):
+                if grid[start_r][start_c] == BLACK:
                     end_r = start_r
                     end_c = start_c
                     start_r = r + 1
                     start_c = c - 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(black)
+                        local_grid[start_r][start_c] = BLACK
                         white_balls.remove((start_r, start_c))
                         black_balls.append((start_r, start_c))
-                        start_r -= 1
-                        start_c += 1
+                        start_r += 1
+                        start_c -= 1
 
     # in case its white's turn
     else:
-        local_grid[r][c] = int(not black)
+        local_grid[r][c] = WHITE
         white_balls.append((r, c))
         # check up boundary
         if r - 1 > -1:
             # check above for black
-            if grid[r - 1][c] == int(black):
+            if grid[r - 1][c] == BLACK:
                 start_ptr = r - 1
-                while start_ptr > 0 and grid[start_ptr][c] == int(black):
+                while start_ptr > 0 and grid[start_ptr][c] == BLACK:
                     start_ptr -= 1
 
-                if grid[start_ptr][c] == int(not black):
+                if grid[start_ptr][c] == WHITE:
                     end_ptr = start_ptr
                     start_ptr = r - 1
 
                     while start_ptr != end_ptr:
-                        local_grid[start_ptr][c] = int(not black)
+                        local_grid[start_ptr][c] = WHITE
                         black_balls.remove((start_ptr, c))
                         white_balls.append((start_ptr, c))
                         start_ptr -= 1
         # check down boundary
         if r + 1 < row:
             # check below for black
-            if grid[r + 1][c] == int(black):
+            if grid[r + 1][c] == BLACK:
                 start_ptr = r + 1
-                while start_ptr < row - 1 and grid[start_ptr][c] == int(black):
+                while start_ptr < row - 1 and grid[start_ptr][c] == BLACK:
                     start_ptr += 1
 
-                if grid[start_ptr][c] == int(not black):
+                if grid[start_ptr][c] == WHITE:
                     end_ptr = start_ptr
                     start_ptr = r + 1
 
                     while start_ptr != end_ptr:
-                        local_grid[start_ptr][c] = int(not black)
+                        local_grid[start_ptr][c] = WHITE
                         black_balls.remove((start_ptr, c))
                         white_balls.append((start_ptr, c))
                         start_ptr += 1
         # check left boundary
         if c - 1 > -1:
             # check left for black
-            if grid[r][c - 1] == int(black):
+            if grid[r][c - 1] == BLACK:
                 start_ptr = c - 1
-                while start_ptr > 0 and grid[r][start_ptr] == int(black):
+                while start_ptr > 0 and grid[r][start_ptr] == BLACK:
                     start_ptr -= 1
 
-                if grid[r][start_ptr] == int(not black):
+                if grid[r][start_ptr] == WHITE:
                     end_ptr = start_ptr
                     start_ptr = c - 1
 
                     while start_ptr != end_ptr:
-                        local_grid[r][start_ptr] = int(not black)
+                        local_grid[r][start_ptr] = WHITE
                         black_balls.remove((r, start_ptr))
                         white_balls.append((r, start_ptr))
                         start_ptr -= 1
         # check right boundary
         if c + 1 < col:
             # check right for black
-            if grid[r][c + 1] == int(black):
+            if grid[r][c + 1] == BLACK:
                 start_ptr = c + 1
-                while start_ptr < col - 1 and grid[r][start_ptr] == int(black):
+                while start_ptr < col - 1 and grid[r][start_ptr] == BLACK:
                     start_ptr += 1
 
-                if grid[r][start_ptr] == int(not black):
+                if grid[r][start_ptr] == WHITE:
                     end_ptr = start_ptr
                     start_ptr = c + 1
 
                     while start_ptr != end_ptr:
-                        local_grid[r][start_ptr] = int(not black)
+                        local_grid[r][start_ptr] = WHITE
                         black_balls.remove((r, start_ptr))
                         white_balls.append((r, start_ptr))
                         start_ptr += 1
         # check upper left boundary
         if r - 1 > -1 and c - 1 > -1:
             # check upper left for black
-            if grid[r - 1][c - 1] == int(black):
+            if grid[r - 1][c - 1] == BLACK:
                 start_r = r - 1
                 start_c = c - 1
-                while start_r > 0 and start_c > 0 and grid[start_r][start_c] == int(black):
+                while start_r > 0 and start_c > 0 and grid[start_r][start_c] == BLACK:
                     start_r -= 1
                     start_c -= 1
 
-                if grid[start_r][start_c] == int(not black):
+                if grid[start_r][start_c] == WHITE:
                     end_r = start_r
                     end_c = start_c
                     start_r = r - 1
                     start_c = c - 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(not black)
+                        local_grid[start_r][start_c] = WHITE
                         black_balls.remove((start_r, start_c))
                         white_balls.append((start_r, start_c))
                         start_r -= 1
@@ -490,21 +495,21 @@ def generate_child(curr_state: State, move):
         # check lower right boundary
         if r + 1 < row and c + 1 < col:
             # check lower right for black
-            if grid[r + 1][c + 1] == int(black):
+            if grid[r + 1][c + 1] == BLACK:
                 start_r = r + 1
                 start_c = c + 1
-                while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == int(black):
+                while start_r < row - 1 and start_c < col - 1 and grid[start_r][start_c] == BLACK:
                     start_r += 1
                     start_c += 1
 
-                if grid[start_r][start_c] == int(not black):
+                if grid[start_r][start_c] == WHITE:
                     end_r = start_r
                     end_c = start_c
                     start_r = r + 1
                     start_c = c + 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(not black)
+                        local_grid[start_r][start_c] = WHITE
                         black_balls.remove((start_r, start_c))
                         white_balls.append((start_r, start_c))
                         start_r += 1
@@ -512,21 +517,21 @@ def generate_child(curr_state: State, move):
         # check upper right boundary
         if r - 1 > -1 and c + 1 < col:
             # check upper right for black
-            if grid[r - 1][c + 1] == int(black):
+            if grid[r - 1][c + 1] == BLACK:
                 start_r = r - 1
                 start_c = c + 1
-                while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == int(black):
+                while start_r > 0 and start_c < col - 1 and grid[start_r][start_c] == BLACK:
                     start_r -= 1
                     start_c += 1
 
-                if grid[start_r][start_c] == int(not black):
+                if grid[start_r][start_c] == WHITE:
                     end_r = start_r
                     end_c = start_c
                     start_r = r - 1
                     start_c = c + 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(not black)
+                        local_grid[start_r][start_c] = WHITE
                         black_balls.remove((start_r, start_c))
                         white_balls.append((start_r, start_c))
                         start_r -= 1
@@ -534,25 +539,25 @@ def generate_child(curr_state: State, move):
         # check lower left boundary
         if r + 1 < row and c - 1 > - 1:
             # check lower left for black
-            if grid[r + 1][c - 1] == int(black):
+            if grid[r + 1][c - 1] == BLACK:
                 start_r = r + 1
                 start_c = c - 1
-                while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == int(black):
+                while start_r < row - 1 and start_c > 0 and grid[start_r][start_c] == BLACK:
                     start_r += 1
                     start_c -= 1
 
-                if grid[start_r][start_c] == int(not black):
+                if grid[start_r][start_c] == WHITE:
                     end_r = start_r
                     end_c = start_c
                     start_r = r + 1
                     start_c = c - 1
 
                     while start_r != end_r and start_c != end_c:
-                        local_grid[start_r][start_c] = int(not black)
+                        local_grid[start_r][start_c] = WHITE
                         black_balls.remove((start_r, start_c))
                         white_balls.append((start_r, start_c))
-                        start_r -= 1
-                        start_c += 1
+                        start_r += 1
+                        start_c -= 1
 
     child_state: State = State(local_grid, black_balls, white_balls, not black, (r, c))
 
@@ -574,6 +579,7 @@ def evaluation(curr_state: State):
 
 
 def mini_max(root: TreeNode, depth, alpha, beta, maximizing_player):
+
     if depth == 0:
         return evaluation(root.val), root.val
 
@@ -583,12 +589,12 @@ def mini_max(root: TreeNode, depth, alpha, beta, maximizing_player):
         max_eval = float('-inf')
         next_move_state = None
         for child in root.children:
-            [eval, next_move_state] = mini_max(child, depth - 1, alpha, beta, not maximizing_player)
-            if eval > max_eval:
-                max_eval = eval
+            [curr_eval, _] = mini_max(child, depth - 1, alpha, beta, not maximizing_player)
+            if curr_eval > max_eval:
+                max_eval = curr_eval
                 next_move_state = child.val
 
-            alpha = max(alpha, eval)
+            alpha = max(alpha, curr_eval)
             if beta <= alpha:
                 break
         return max_eval, next_move_state
@@ -596,19 +602,26 @@ def mini_max(root: TreeNode, depth, alpha, beta, maximizing_player):
         min_eval = float('inf')
         next_move_state = None
         for child in root.children:
-            [eval, next_move_state] = mini_max(child, depth - 1, alpha, beta, not maximizing_player)
-            if eval < min_eval:
-                min_eval = eval
+            [curr_eval, _] = mini_max(child, depth - 1, alpha, beta, not maximizing_player)
+            if curr_eval < min_eval:
+                min_eval = curr_eval
                 next_move_state = child.val
 
-            beta = min(beta, eval)
+            beta = min(beta, curr_eval)
             if beta <= alpha:
                 break
+
         return min_eval, next_move_state
 
 
-def updateColors(grid):
-    return grid
+def show_hints(valid_moves, circles):
+    for point in valid_moves:
+        circles[point[1]][point[0]].setFill(color_rgb(100, 0, 0))
+
+
+def remove_hints(valid_moves, circles):
+    for point in valid_moves:
+        circles[point[1]][point[0]].setFill(color_rgb(255, 255, 255))
 
 
 def move(grid, r, c, player):
@@ -632,6 +645,7 @@ def mouseToGrid(mouse_click):
 
 def main():
     # setup initial grid
+    global moves_made
     win = GraphWin("w", wWidth, wHeight)
     win.setBackground('white')
     for i in range(cols):
@@ -660,16 +674,37 @@ def main():
     initial_move = (None, None)
     initial_state: State = State(grid, blacks, whites, black_turn, initial_move)
 
-    [state_cost, next_state] = mini_max(TreeNode(initial_state), 1, float('-inf'), float('inf'), black_turn)
-
     while win.checkKey() != 'Escape':
-        mouse_click = win.getMouse()
-        if type(mouse_click) == Point:
-            r, c = mouseToGrid(mouse_click)
-            grid = move(grid, r, c, int(black_turn))
-            updateGraphics(grid, circles)
-            black_turn = not black_turn
+        if len(initial_state.valid_moves) == 0:
+            break
+        if initial_state.black_turn:  # Ai's turn
+            [state_cost, next_state] = mini_max(TreeNode(initial_state), 3, float('-inf'), float('inf'), black_turn)
+            initial_state = next_state
+            if len(initial_state.valid_moves) == 0:
+                initial_state.black_turn = not initial_state.black_turn
+                initial_state.valid_moves = generate_valid_moves(initial_state)
+            updateGraphics(initial_state.grid, circles)
+        else:
 
+            show_hints(initial_state.valid_moves, circles)
+            mouse_click = win.checkMouse()
+            if type(mouse_click) == Point:
+                r, c = mouseToGrid(mouse_click)
+
+                if (r, c) in initial_state.valid_moves:
+                    remove_hints(initial_state.valid_moves, circles)
+
+                    initial_state = generate_child(initial_state, [r, c])
+                    if len(initial_state.valid_moves) == 0:
+                        initial_state.black_turn = not initial_state.black_turn
+                        initial_state.valid_moves = generate_valid_moves(initial_state)
+
+                    updateGraphics(initial_state.grid, circles)
+                # black_turn = black_turn
+
+    print(initial_state.black_score)
+    print(initial_state.white_score)
+    win.getKey()
     win.close()
 
 
